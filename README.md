@@ -92,40 +92,6 @@ All numbers are on a held-out test set (20% of the data, `random_state=42`).
 - Predictions and probabilities are identical to scikit-learn's `KNeighborsClassifier`.
 - Logistic regression wins on this dataset: the classes are separated well by a straight border. k-NN wins on non-linear data such as the two-moons dataset, where it can follow a curved border.
 
-## Getting started
-
-Requires [uv](https://docs.astral.sh/uv/).
-
-```bash
-git clone git@github.com:razvanp06/ml_from_scratch.git
-cd ml_from_scratch
-uv sync                 # creates .venv and installs everything from uv.lock
-uv run pytest -v        # runs the comparisons with scikit-learn
-```
-
-To use an algorithm in your own code or notebook:
-
-```python
-from ml_from_scratch.preprocessing import StandardScaler
-from ml_from_scratch.knn import KNNClassifier
-from ml_from_scratch.model_selection import cross_val_score
-
-scaler = StandardScaler()
-X_train_s = scaler.fit_transform(X_train)   # fit on training data only
-X_test_s = scaler.transform(X_test)
-
-scores = cross_val_score(KNNClassifier(k=5), X_train_s, y_train)
-```
-
-For notebooks, select the project's `.venv` as the kernel and start with:
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
-so edits to `src/` are picked up without restarting the kernel.
-
 ## Rules followed in this project
 
 1. **NumPy only** in `src/`. scikit-learn is used only in tests and notebooks, as a reference.
