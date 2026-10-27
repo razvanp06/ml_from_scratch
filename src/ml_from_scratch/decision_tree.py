@@ -6,12 +6,17 @@ def gini(y):
 	p = y.mean()
 	return 1 - p ** 2 - (1 - p) ** 2
 
-def best_split(X, y):
+def best_split(X, y, max_feature=None, rng=None):
 	n_samples, n_features = X.shape
 	parent = gini(y)
 	best_gain, best_feature, best_threshold = 0, None, None
 
-	for j in range(n_features):
+	if max_feature is None:
+		features=range(n_features)
+	else:
+		features = rng.choice(n_features, size=max_feature, replace=False)
+
+	for j in features:
 		values = np.unique(X[:, j])
 		if len(values) < 2:
 			continue
@@ -31,11 +36,14 @@ def best_split(X, y):
 
 
 class DecisionTreeClassifier:
-	def __init__(self, max_depth=None, min_samples_split=2):
+	def __init__(self, max_depth=None, min_samples_split=2, max_features=None, seed=None):
+		self.max_features = max_features
+		self.seed = seed
 		self.max_depth = max_depth
 		self.min_samples_split = 2
 
 	def fit(self, X, y):
+		self.rng_ = np.random.default_rng(self.seed)
 		self.root_ = self._grow(X, y, depth=0)
 		return self
 
@@ -49,7 +57,7 @@ class DecisionTreeClassifier:
 		if len(y) < self.min_samples_split:
 			return leaf
 
-		feature, threshold, gain = best_split(X, y)
+		feature, threshold, gain = best_split(X, y, self.max_features, self.rng_)
 		if feature is None:
 			return leaf
 
